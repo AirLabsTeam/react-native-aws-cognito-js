@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { util } from 'aws-sdk/global';
+import { util } from 'aws-sdk/dist/aws-sdk-react-native';
 
 import BigInteger from './BigInteger';
 
