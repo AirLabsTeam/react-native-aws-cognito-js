@@ -19,5 +19,8 @@
   "license": "",
   "peerDependencies": {
     "react-native": ">=0.40.0"
+  },
+  "dependencies": {
+    "aws-sdk": "git://github.com/aws/aws-sdk-js.git#react-native"
   }
 }
