@@ -8,9 +8,10 @@ This project uses Native Modules to handle intensive math operations on the devi
 
 - [x] Add example application
 - [x] Add ios compatibility
+- [x] Add advanced example
 - [ ] Add android compatibility
 - [ ] Make sure podspec works
-- [ ] Add advanced example
+- [ ] Add AsyncStorage as StorageHelper
 
 ## Installation
 
@@ -101,6 +102,57 @@ login = () => {
     },
     onFailure: (err) => {
       alert(err);
+    },
+  });
+}
+```
+
+## Advanced Example
+
+```js
+//- AWS.js
+//create AWS with userPool using dotenv to hold environment variables
+import AWS, { CognitoIdentityServiceProvider } from 'aws-sdk/dist/aws-sdk-react-native';
+import * as enhancements from 'react-native-aws-cognito-js';
+import { AWS_REGION, AWS_POOL_ID, AWS_POOL_CLIENT_ID } from 'react-native-dotenv';
+
+Object.keys(enhancements).forEach(key => (CognitoIdentityServiceProvider[key] = enhancements[key]));
+
+AWS.config.update({ region: AWS_REGION });
+
+export const poolData = {
+  UserPoolId: AWS_POOL_ID,
+  ClientId: AWS_POOL_CLIENT_ID,
+};
+
+export const userPool = new AWS.CognitoIdentityServiceProvider.CognitoUserPool(poolData);
+
+export default AWS;
+```
+
+```js
+//import AWS and userPool
+import AWS, { userPool } from './AWS';
+
+//component:
+state = {
+  username: '',
+  password: '',
+}
+
+login = () => {
+  const { username, password } = this.state;
+  const authenticationData = { Username: username, Password: password };
+  const authenticationDetails = new AWS.CognitoIdentityServiceProvider.AuthenticationDetails(authenticationData);
+  const userData = { Username: username, Pool: userPool };
+  const cognitoUser = new AWS.CognitoIdentityServiceProvider.CognitoUser(userData);
+  cognitoUser.authenticateUser(authenticationDetails, {
+    onSuccess: (result) => {
+      console.log('result', result);
+      console.log('access token:', result.getAccessToken().getJwtToken());
+    },
+    onFailure: (error) => {
+      Alert.alert(error.code, error.message);
     },
   });
 }
