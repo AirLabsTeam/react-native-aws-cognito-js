@@ -19,6 +19,10 @@ import { util } from 'aws-sdk/dist/aws-sdk-react-native';
 
 import BigInteger from './BigInteger';
 
+import { NativeModules } from 'react-native';
+
+const { RNAWSCognito } = NativeModules;
+
 const initN = 'FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD1'
   + '29024E088A67CC74020BBEA63B139B22514A08798E3404DD'
   + 'EF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245'
@@ -51,14 +55,6 @@ export default class AuthenticationHelper {
 
     this.smallAValue = this.generateRandomSmallA();
 
-    this.calculateA(this.smallAValue, (err, result) => {
-      if (err) {
-        throw new Error(err);
-        return;
-      }
-      this.largeAValue = result;
-    });
-
     this.infoBits = new util.Buffer('Caldera Derived Key', 'utf8');
 
     this.poolName = PoolName;
@@ -69,16 +65,46 @@ export default class AuthenticationHelper {
    * @param {BigInteger} target Target to run mod pow against.
    * @param {BigInteger} value Actual mod pow value.
    * @param {BigInteger} modifier Modifier value for mod pow.
-   * @param {object} callback Result callback map.
+   * @param {nodeCallback<BigInteger>} callback Called on success or error.
    * @returns {void}
    */
   computeModPow(target, value, modifier, callback) {
-    try {
-      const result = target.modPow(value, modifier);
-      return callback(null, result);
-    } catch (err) {
-      return callback(err, null);
-    }
+    RNAWSCognito.computeModPow({
+      target: target.toString(16),
+      value: value.toString(16)
+    }, (err, result) => {
+      if (err) {
+        return callback(new Error(err), null);
+      }
+      const bigIntResult = new BigInteger(result, 16);
+      return callback(null, bigIntResult);
+    });
+    return undefined;
+  }
+
+  /**
+   * Calculate mod pow with target, value and modifier.
+   * @param {BigInteger} xValue Hex hashed salted username and password.
+   * @param {BigInteger} serverBValue Server B value.
+   * @param {nodeCallback<BigInteger>} callback Called on success or error.
+   * @returns {void}
+   */
+  computeS(xValue, serverBValue, callback) {
+    RNAWSCognito.computeS({
+      g: this.g.toString(16),
+      x: xValue.toString(16),
+      k: this.k.toString(16),
+      a: this.smallAValue.toString(16),
+      b: serverBValue.toString(16),
+      u: this.UValue.toString(16)
+    }, (err, result) => {
+      if (err) {
+        return callback(new Error(err), null);
+      }
+      const bigIntResult = new BigInteger(result, 16);
+      return callback(null, bigIntResult);
+    });
+    return undefined;
   }
 
   /**
@@ -89,10 +115,21 @@ export default class AuthenticationHelper {
   }
 
   /**
+   * @param {nodeCallback<BigInteger>} callback Called on success or error.
    * @returns {BigInteger} large A, a value generated from small A
    */
-  getLargeAValue() {
-    return this.largeAValue;
+  getLargeAValue(callback) {
+    if (this.largeAValue) {
+      return callback(null, this.largeAValue);
+    }
+    this.calculateA(this.smallAValue, (err, result) => {
+      if (err) {
+        return callback(new Error(err), null);
+      }
+      this.largeAValue = result;
+      return callback(null, this.largeAValue);
+    });
+    return undefined;
   }
 
   /**
@@ -145,7 +182,7 @@ export default class AuthenticationHelper {
    * @param {string} username User to generate verifier for.
    * @returns {void}
    */
-  generateHashDevice(deviceGroupKey, username) {
+  generateHashDevice(deviceGroupKey, username, callback) {
     this.randomPassword = this.generateRandomString();
     const combinedString = `${deviceGroupKey}${username}:${this.randomPassword}`;
     const hashedString = this.hash(combinedString);
@@ -155,19 +192,20 @@ export default class AuthenticationHelper {
 
     this.computeModPow(this.g, new BigInteger(this.hexHash(this.SaltToHashDevices + hashedString), 16), this.N, (err, result) => {
       if (err) {
-        throw new Error(err);
-        return;
+        return callback(new Error(err), null);
       }
       const verifierDevicesNotPadded = result;
       this.verifierDevices = this.padHex(verifierDevicesNotPadded);
+      callback(null, 'SUCCESS');
     });
+    return undefined;
   }
 
   /**
    * Calculate the client's public value A = g^a%N
    * with the generated random number a
    * @param {BigInteger} a Randomly generated small A.
-   * @param {object} callback Result callback map.
+   * @param {nodeCallback<BigInteger>} callback Called on success or error.
    * @returns {void}
    * @private
    */
@@ -181,45 +219,6 @@ export default class AuthenticationHelper {
         return callback(new Error('Illegal paramater. A mod N cannot be 0.'), null);
       }
       return callback(null, A);
-    });
-    return undefined;
-  }
-
-  /**
-   * Calculate the client's public value S
-   * @param {BigInteger} xValue Hash salted password.
-   * @param {BigInteger} serverBValue Server B value.
-   * @param {object} callback Result callback map.
-   * @returns {void}
-   * @private
-   */
-  calculateS(xValue, serverBValue, callback) {
-    this.computeModPow(this.g, xValue, this.N, (err, result) => {
-      if (err) {
-        return callback(new Error(err), null);
-      }
-      const gModPowXN = result;
-      const intValue2 = serverBValue.subtract(this.k.multiply(gModPowXN));
-      return this.calculateIntValue2(xValue, intValue2, callback);
-    });
-    return undefined;
-  }
-
-  /**
-   * Calculate intValue2
-   * @param {BigInteger} xValue Hash salted password.
-   * @param {BigInteger} serverBValue Server B value.
-   * @param {object} callback Result callback map.
-   * @returns {void}
-   * @private
-   */
-  calculateIntValue2(xValue, intValue2, callback) {
-    this.computeModPow(intValue2, this.smallAValue.add(this.UValue.multiply(xValue)), this.N, (err, result) => {
-      if (err) {
-        return callback(new Error(err), null);
-      }
-      const sValue = result.mod(this.N);
-      return callback(null, sValue);
     });
     return undefined;
   }
@@ -301,7 +300,7 @@ export default class AuthenticationHelper {
 
     const xValue = new BigInteger(this.hexHash(this.padHex(salt) + usernamePasswordHash), 16);
 
-    this.calculateS(xValue, serverBValue, (err, result) => {
+    this.computeS(xValue, serverBValue, (err, result) => {
       if (err) {
         throw new Error(err);
         return;
