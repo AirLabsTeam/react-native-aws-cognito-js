@@ -16,7 +16,7 @@
   ],
   "homepage": "https://github.com/airlabsteam/react-native-aws-cognito-js",
   "author": "Jon Parsons <jonparsons@gmail.com> (https://github.com/jmparsons)",
-  "license": "",
+  "license": "(Apache-2.0 OR Amazon Software License)",
   "peerDependencies": {
     "react-native": ">=0.40.0"
   },

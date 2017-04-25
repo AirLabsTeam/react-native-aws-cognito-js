@@ -1,0 +1,105 @@
+react-native-aws-cognito-js
+Copyright 2017 Air Labs, Inc. or its affiliates. All Rights Reserved.
+
+This product includes software developed by Amazon Technologies, Inc (http://www.amazon.com/).
+
+Licensed under the Amazon Software License included in LICENSE.txt.
+
+*****************************
+AMAZON PROPRIETARY COMPONENTS
+*****************************
+
+The following components are distributed under a proprietary license by Amazon Technologies, Inc
+
+- Amazon Cognito Identity Provider SDK for JavaScript
+  Copyright 2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+  https://github.com/aws/amazon-cognito-identity-js
+
+
+- AWS SDK for JavaScript
+  Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+  This product includes software developed at
+  Amazon Web Services, Inc. (http://aws.amazon.com/).
+  https://github.com/aws/aws-sdk-js
+
+See the License for the specific language governing permissions and limitations under the License.
+
+**********************
+THIRD PARTY COMPONENTS
+**********************
+
+This software includes third party software subject to the following copyrights:
+
+- JKBigInteger – Copyright (c) 2015 Midfar Sun. All rights reserved. – MIT License
+  https://github.com/kirsteins/JKBigInteger/
+
+- Basic JavaScript BN library - Copyright (c) 2005  Tom Wu. All Rights Reserved.
+  http://www-cs-students.stanford.edu/%7Etjw/jsbn/jsbn.js
+
+====================
+
+JKBigInteger – Copyright (c) 2015 Midfar Sun. All rights reserved.
+
+Copyright (C) 2013 Jānis Kiršteins
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+====================
+
+Licensing
+---------
+
+This software is covered under the following copyright:
+
+/*
+ * Copyright (c) 2003-2005  Tom Wu
+ * All Rights Reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
+ * WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * IN NO EVENT SHALL TOM WU BE LIABLE FOR ANY SPECIAL, INCIDENTAL,
+ * INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES WHATSOEVER
+ * RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT ADVISED OF
+ * THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF LIABILITY, ARISING OUT
+ * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ *
+ * In addition, the following condition applies:
+ *
+ * All redistributions must retain an intact copy of this copyright notice
+ * and disclaimer.
+ */
+
+Address all questions regarding this license to:
+
+  Tom Wu
+  tjw@cs.Stanford.EDU
+
+====================
