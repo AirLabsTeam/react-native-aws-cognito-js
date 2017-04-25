@@ -1,8 +1,8 @@
 ## react-native-aws-cognito-js [![npm version](https://badge.fury.io/js/react-native-aws-cognito-js.svg)](http://badge.fury.io/js/react-native-aws-cognito-js)
 
-This is an adaptation of [Amazon Cognito Identity SDK for JavaScript](https://github.com/aws/amazon-cognito-identity-js) for [React Native](https://github.com/facebook/react-native/) in combination with [AWS SDK for JavaScript](https://github.com/aws/aws-sdk-js/tree/react-native).
+This is an adaptation of [Amazon Cognito Identity SDK for JavaScript](https://github.com/aws/amazon-cognito-identity-js) in combination with [AWS SDK for JavaScript](https://github.com/aws/aws-sdk-js/tree/react-native) for [React Native](https://github.com/facebook/react-native/).
 
-This project uses native modules to handle heavy math operations on the device using react bridge.
+This project uses Native Modules to handle intensive math operations on the device using the React Native bridge.
 
 ### Todo
 
