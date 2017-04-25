@@ -50,11 +50,35 @@ export default class AuthenticationHelper {
     this.k = new BigInteger(this.hexHash(`00${this.N.toString(16)}0${this.g.toString(16)}`), 16);
 
     this.smallAValue = this.generateRandomSmallA();
-    this.largeAValue = this.calculateA(this.smallAValue);
+
+    this.calculateA(this.smallAValue, (err, result) => {
+      if (err) {
+        throw new Error(err);
+        return;
+      }
+      this.largeAValue = result;
+    });
 
     this.infoBits = new util.Buffer('Caldera Derived Key', 'utf8');
 
     this.poolName = PoolName;
+  }
+
+  /**
+   * Calculate mod pow with target, value and modifier.
+   * @param {BigInteger} target Target to run mod pow against.
+   * @param {BigInteger} value Actual mod pow value.
+   * @param {BigInteger} modifier Modifier value for mod pow.
+   * @param {object} callback Result callback map.
+   * @returns {void}
+   */
+  computeModPow(target, value, modifier, callback) {
+    try {
+      const result = target.modPow(value, modifier);
+      return callback(null, result);
+    } catch (err) {
+      return callback(err, null);
+    }
   }
 
   /**
@@ -129,27 +153,75 @@ export default class AuthenticationHelper {
     const hexRandom = util.crypto.lib.randomBytes(16).toString('hex');
     this.SaltToHashDevices = this.padHex(new BigInteger(hexRandom, 16));
 
-    const verifierDevicesNotPadded = this.g.modPow(
-      new BigInteger(this.hexHash(this.SaltToHashDevices + hashedString), 16),
-      this.N);
-
-    this.verifierDevices = this.padHex(verifierDevicesNotPadded);
+    this.computeModPow(this.g, new BigInteger(this.hexHash(this.SaltToHashDevices + hashedString), 16), this.N, (err, result) => {
+      if (err) {
+        throw new Error(err);
+        return;
+      }
+      const verifierDevicesNotPadded = result;
+      this.verifierDevices = this.padHex(verifierDevicesNotPadded);
+    });
   }
 
   /**
    * Calculate the client's public value A = g^a%N
    * with the generated random number a
    * @param {BigInteger} a Randomly generated small A.
-   * @returns {BigInteger} Computed large A.
+   * @param {object} callback Result callback map.
+   * @returns {void}
    * @private
    */
-  calculateA(a) {
-    const A = this.g.modPow(a, this.N);
+  calculateA(a, callback) {
+    this.computeModPow(this.g, a, this.N, (err, result) => {
+      if (err) {
+        return callback(new Error(err), null);
+      }
+      const A = result;
+      if (A.mod(this.N).equals(BigInteger.ZERO)) {
+        return callback(new Error('Illegal paramater. A mod N cannot be 0.'), null);
+      }
+      return callback(null, A);
+    });
+    return undefined;
+  }
 
-    if (A.mod(this.N).equals(BigInteger.ZERO)) {
-      throw new Error('Illegal paramater. A mod N cannot be 0.');
-    }
-    return A;
+  /**
+   * Calculate the client's public value S
+   * @param {BigInteger} xValue Hash salted password.
+   * @param {BigInteger} serverBValue Server B value.
+   * @param {object} callback Result callback map.
+   * @returns {void}
+   * @private
+   */
+  calculateS(xValue, serverBValue, callback) {
+    this.computeModPow(this.g, xValue, this.N, (err, result) => {
+      if (err) {
+        return callback(new Error(err), null);
+      }
+      const gModPowXN = result;
+      const intValue2 = serverBValue.subtract(this.k.multiply(gModPowXN));
+      return this.calculateIntValue2(xValue, intValue2, callback);
+    });
+    return undefined;
+  }
+
+  /**
+   * Calculate intValue2
+   * @param {BigInteger} xValue Hash salted password.
+   * @param {BigInteger} serverBValue Server B value.
+   * @param {object} callback Result callback map.
+   * @returns {void}
+   * @private
+   */
+  calculateIntValue2(xValue, intValue2, callback) {
+    this.computeModPow(intValue2, this.smallAValue.add(this.UValue.multiply(xValue)), this.N, (err, result) => {
+      if (err) {
+        return callback(new Error(err), null);
+      }
+      const sValue = result.mod(this.N);
+      return callback(null, sValue);
+    });
+    return undefined;
   }
 
   /**
@@ -210,17 +282,18 @@ export default class AuthenticationHelper {
    * @param {String} password Password.
    * @param {BigInteger} serverBValue Server B value.
    * @param {BigInteger} salt Generated salt.
-   * @returns {Buffer} Computed HKDF value.
+   * @param {object} callback Result callback map.
+   * @returns {void}
    */
-  getPasswordAuthenticationKey(username, password, serverBValue, salt) {
+  getPasswordAuthenticationKey(username, password, serverBValue, salt, callback) {
     if (serverBValue.mod(this.N).equals(BigInteger.ZERO)) {
-      throw new Error('B cannot be zero.');
+      callback(new Error('B cannot be zero.'), null);
     }
 
     this.UValue = this.calculateU(this.largeAValue, serverBValue);
 
     if (this.UValue.equals(BigInteger.ZERO)) {
-      throw new Error('U cannot be zero.');
+      callback(new Error('U cannot be zero.'), null);
     }
 
     const usernamePassword = `${this.poolName}${username}:${password}`;
@@ -228,18 +301,18 @@ export default class AuthenticationHelper {
 
     const xValue = new BigInteger(this.hexHash(this.padHex(salt) + usernamePasswordHash), 16);
 
-    const gModPowXN = this.g.modPow(xValue, this.N);
-    const intValue2 = serverBValue.subtract(this.k.multiply(gModPowXN));
-    const sValue = intValue2.modPow(
-      this.smallAValue.add(this.UValue.multiply(xValue)),
-      this.N
-    ).mod(this.N);
-
-    const hkdf = this.computehkdf(
-      new util.Buffer(this.padHex(sValue), 'hex'),
-      new util.Buffer(this.padHex(this.UValue.toString(16)), 'hex'));
-
-    return hkdf;
+    this.calculateS(xValue, serverBValue, (err, result) => {
+      if (err) {
+        throw new Error(err);
+        return;
+      }
+      const sValue = result;
+      const hkdf = this.computehkdf(
+        new util.Buffer(this.padHex(sValue), 'hex'),
+        new util.Buffer(this.padHex(this.UValue.toString(16)), 'hex'));
+      callback(null, hkdf);
+    });
+    return undefined;
   }
 
   /**
