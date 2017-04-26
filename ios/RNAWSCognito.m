@@ -19,6 +19,8 @@ RCT_EXPORT_METHOD(computeModPow:(NSDictionary *)values
     JKBigInteger *result = [target pow:value andMod:N];
     if (result) {
         callback(@[[NSNull null], [result stringValueWithRadix:16]]);
+    } else {
+        callback(@[@[RCTMakeError(@"computeModPow error", nil, nil)], [NSNull null]]);
     }
     
 }
@@ -33,14 +35,15 @@ RCT_EXPORT_METHOD(computeS:(NSDictionary *)values
     JKBigInteger *a = [[JKBigInteger alloc] initWithString:values[@"a"] andRadix:16];
     JKBigInteger *b = [[JKBigInteger alloc] initWithString:values[@"b"] andRadix:16];
     JKBigInteger *u = [[JKBigInteger alloc] initWithString:values[@"u"] andRadix:16];
-    
     JKBigInteger *exp = [a add:[u multiply:x]];
     JKBigInteger *base = [b subtract:[k multiply:[g pow:x andMod:N]]];
     base = [self mod:base divisor:N];
-    JKBigInteger *S = [base pow:exp andMod:N];
-    S = [self mod:S divisor:N];
-    if (S) {
-        callback(@[[NSNull null], [S stringValueWithRadix:16]]);
+    JKBigInteger *result = [base pow:exp andMod:N];
+    result = [self mod:result divisor:N];
+    if (result) {
+        callback(@[[NSNull null], [result stringValueWithRadix:16]]);
+    } else {
+        callback(@[@[RCTMakeError(@"computeS error", nil, nil)], [NSNull null]]);
     }
 }
 
