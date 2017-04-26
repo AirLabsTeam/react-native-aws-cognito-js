@@ -10,7 +10,6 @@ This project uses Native Modules to handle intensive math operations on the devi
 - [x] Add ios compatibility
 - [x] Add advanced example
 - [x] Add android compatibility
-- [ ] Make sure podspec works
 - [ ] Add AsyncStorage as StorageHelper
 
 ## Installation
