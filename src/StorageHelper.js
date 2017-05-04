@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 
+import { AsyncStorage } from 'react-native';
+
+const MEMORY_KEY_PREFIX = '@MemoryStorage:';
 let dataMemory = {};
 
 /** @class */
@@ -27,6 +30,7 @@ class MemoryStorage {
    * @returns {string} value that was set
    */
   static setItem(key, value) {
+    AsyncStorage.setItem(MEMORY_KEY_PREFIX + key, value);
     dataMemory[key] = value;
     return dataMemory[key];
   }
@@ -47,6 +51,7 @@ class MemoryStorage {
    * @returns {string} value - value that was deleted
    */
   static removeItem(key) {
+    AsyncStorage.removeItem(MEMORY_KEY_PREFIX + key);
     return delete dataMemory[key];
   }
 
@@ -58,6 +63,27 @@ class MemoryStorage {
     dataMemory = {};
     return dataMemory;
   }
+
+  /**
+  * Will sync the MemoryStorage data from AsyncStorage to storageWindow MemoryStorage
+  * @returns {void}
+  */
+  static sync(callback) {
+    AsyncStorage.getAllKeys((err, keys) => {
+      if (err) return callback(err, null);
+      const memoryKeys = keys.filter((key) => key.startsWith(MEMORY_KEY_PREFIX));
+      AsyncStorage.multiGet(memoryKeys, (err, stores) => {
+        if (err) return callback(err, null);
+        stores.map((result, index, store) => {
+          const key = store[index][0];
+          const value = store[index][1];
+          const memoryKey = key.replace(MEMORY_KEY_PREFIX, '');
+          dataMemory[memoryKey] = value;
+        });
+        callback(null, 'SUCCESS');
+      });
+    });
+  }
 }
 
 /** @class */
@@ -68,13 +94,7 @@ export default class StorageHelper {
    * @returns {object} the storage
    */
   constructor() {
-    try {
-      this.storageWindow = window.localStorage;
-      this.storageWindow.setItem('aws.cognito.test-ls', 1);
-      this.storageWindow.removeItem('aws.cognito.test-ls');
-    } catch (exception) {
-      this.storageWindow = MemoryStorage;
-    }
+    this.storageWindow = MemoryStorage;
   }
 
   /**

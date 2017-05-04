@@ -36,6 +36,29 @@ export default class App extends Component {
     password: '',
   }
 
+  componentDidMount() {
+    this.checkUser();
+  }
+
+  checkUser = () => {
+    const { username, password } = this.state;
+    const authenticationData = {
+      Username: username,
+      Password: password,
+    };
+    const authenticationDetails = new AuthenticationDetails(authenticationData);
+    const poolData = {
+      UserPoolId: appConfig.UserPoolId,
+      ClientId: appConfig.ClientId
+    };
+    const userPool = new CognitoUserPool(poolData);
+    userPool.storage.sync((err, result) => {
+      // AsyncStorage MemoryStorage variables are now synced
+      // to userPool.storage and cognitoUser.storage values
+      // for checking session and user with built in storage
+    });
+  }
+
   login = () => {
     const { username, password } = this.state;
     const authenticationData = {
@@ -63,7 +86,7 @@ export default class App extends Component {
           }
         });
         alert('Success');
-        console.log(Config.credentials)
+        console.log(Config.credentials);
       },
       onFailure: (err) => {
         alert(err);

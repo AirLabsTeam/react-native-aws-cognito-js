@@ -4,14 +4,6 @@ This is an adaptation of [Amazon Cognito Identity SDK for JavaScript](https://gi
 
 This project uses Native Modules to handle intensive math operations on the device using the React Native bridge.
 
-### Todo
-
-- [x] Add example application
-- [x] Add ios compatibility
-- [x] Add advanced example
-- [x] Add android compatibility
-- [ ] Add AsyncStorage as StorageHelper
-
 ## Installation
 
 Install in your application directory:
@@ -30,6 +22,26 @@ Link project:
 
 ```bash
 react-native link react-native-aws-cognito-js
+```
+
+## MemoryStorage
+
+The local MemoryStorage can handle everything on the authentication side, but the data is lost when the app is reopened. The storage sync method will grab only the MemoryStorage data from AsyncStorage and update the local MemoryStage with the values.
+
+The new sync method can be used from either the userPool or cognitoUser:
+
+```js
+userPool.storage.sync((err, result) => {
+  // MemoryStorage is now updated with AsyncStorage values
+});
+```
+
+or
+
+```js
+cognitoUser.storage.sync((err, result) => {
+  // MemoryStorage is now updated with AsyncStorage values
+});
 ```
 
 ## Usage
