@@ -1,6 +1,6 @@
 {
   "name": "react-native-aws-cognito-js",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "React Native AWS Cognito JS library.",
   "main": "index.js",
   "scripts": {
