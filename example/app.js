@@ -98,7 +98,7 @@ export default class App extends Component {
     return (
       <View style={styles.container}>
         <TextInput
-          onChangeText={ username => this.setState({ username }) }
+          onChangeText={username => this.setState({ username })}
           style={[styles.input, styles.formElement]}
           autoCapitalize={'none'}
           placeholder={'Username'}
@@ -108,7 +108,7 @@ export default class App extends Component {
           defaultValue=""
         />
         <TextInput
-          onChangeText={ password => this.setState({ password })}
+          onChangeText={password => this.setState({ password })}
           style={[styles.input, styles.formElement]}
           placeholder={'Password'}
           placeholderTextColor={'#aaa'}
