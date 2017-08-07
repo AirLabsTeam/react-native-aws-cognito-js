@@ -15,7 +15,6 @@ public class RNAWSCognitoPackage implements ReactPackage {
       return Arrays.<NativeModule>asList(new RNAWSCognitoModule(reactContext));
     }
 
-    @Override
     public List<Class<? extends JavaScriptModule>> createJSModules() {
       return Collections.emptyList();
     }
