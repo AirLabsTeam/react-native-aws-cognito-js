@@ -10,17 +10,11 @@
     "type": "git",
     "url": "https://github.com/AirLabsTeam/react-native-aws-cognito-js.git"
   },
-  "keywords": [
-    "react-native",
-    "amazon",
-    "aws",
-    "cognito",
-    "identity"
-  ],
+  "keywords": ["react-native", "amazon", "aws", "cognito", "identity"],
   "homepage": "https://github.com/AirLabsTeam/react-native-aws-cognito-js",
   "author": "Jon Parsons <jonparsons@gmail.com> (https://github.com/jmparsons)",
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
-    "aws-sdk": "git://github.com/aws/aws-sdk-js.git#react-native"
+    "aws-sdk": "*"
   }
 }
