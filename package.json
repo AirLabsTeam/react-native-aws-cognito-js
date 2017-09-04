@@ -1,6 +1,6 @@
 {
   "name": "react-native-aws-cognito-js",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "React Native AWS Cognito JS library.",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,13 @@
     "type": "git",
     "url": "https://github.com/AirLabsTeam/react-native-aws-cognito-js.git"
   },
-  "keywords": ["react-native", "amazon", "aws", "cognito", "identity"],
+  "keywords": [
+    "react-native",
+    "amazon",
+    "aws",
+    "cognito",
+    "identity"
+  ],
   "homepage": "https://github.com/AirLabsTeam/react-native-aws-cognito-js",
   "author": "Jon Parsons <jonparsons@gmail.com> (https://github.com/jmparsons)",
   "license": "SEE LICENSE IN LICENSE",
