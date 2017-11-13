@@ -1,5 +1,5 @@
 import { NativeModules } from 'react-native';
-import AWS, { CognitoIdentityServiceProvider } from 'aws-sdk/dist/aws-sdk-react-native';
+import AWS, { CognitoIdentityServiceProvider } from 'aws-sdk/global';
 import * as enhancements from './src';
 export * from './src';
 
