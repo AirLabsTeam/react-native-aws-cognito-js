@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { util } from 'aws-sdk/dist/aws-sdk-react-native';
+import { util } from 'aws-sdk/global';
 
 /** @class */
 export default class CognitoAccessToken {
@@ -24,7 +24,6 @@ export default class CognitoAccessToken {
    * @param {string=} AccessToken The JWT access token.
    */
   constructor({ AccessToken } = {}) {
-    // Assign object
     this.jwtToken = AccessToken || '';
   }
 

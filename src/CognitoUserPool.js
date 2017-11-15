@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { CognitoIdentityServiceProvider } from 'aws-sdk/dist/aws-sdk-react-native';
+import { util } from 'aws-sdk/global';
 
 import CognitoUser from './CognitoUser';
 import StorageHelper from './StorageHelper';
