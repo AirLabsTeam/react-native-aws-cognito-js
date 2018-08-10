@@ -1,3 +1,9 @@
+This library is deprecated. It was merged into aws cognito identity js and finally into: 
+
+https://github.com/aws-amplify/amplify-js.
+
+The amplify library will have the most up to date versions of everything and is maintained by AWS.
+
 ## react-native-aws-cognito-js [![npm version](https://badge.fury.io/js/react-native-aws-cognito-js.svg)](http://badge.fury.io/js/react-native-aws-cognito-js)
 
 This is an adaptation of [Amazon Cognito Identity SDK for JavaScript](https://github.com/aws/amazon-cognito-identity-js) in combination with [AWS SDK for JavaScript](https://github.com/aws/aws-sdk-js/tree/react-native) for [React Native](https://github.com/facebook/react-native/).
